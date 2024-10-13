@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { uploadFile } from '../services/api';
+import { uploadFile } from '../services/api';  // Asegúrate de importar la función correcta
 
-const FileUpload = ({ onUploadSuccess }) => {
+const FileUpload = () => {
   const [file, setFile] = useState(null);
 
   const handleFileChange = (e) => {
@@ -9,11 +9,15 @@ const FileUpload = ({ onUploadSuccess }) => {
   };
 
   const handleUpload = async () => {
-    try {
-      const response = await uploadFile(file);
-      onUploadSuccess(response.data.x, response.data.y);
-    } catch (error) {
-      console.error('Error al subir el archivo:', error);
+    if (file) {
+      try {
+        const response = await uploadFile(file);  // Llama a la función uploadFile correctamente
+        console.log('Respuesta del servidor:', response.data);
+      } catch (error) {
+        console.error('Error al subir el archivo:', error);
+      }
+    } else {
+      console.log('No se ha seleccionado ningún archivo');
     }
   };
 
