@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from scipy.optimize import curve_fit
-from scipy.interpolate import CubicSpline  # Importar CubicSpline para el método Spline Cúbico
+from scipy.interpolate import CubicSpline
 
 app = Flask(__name__)
 
+# Métodos de integración e interpolación
 def metodo_trapecios(x, y):
     n = len(x)
     area = 0.0
@@ -55,11 +56,12 @@ def upload_file():
     method = request.form['method']  # Obtener el método seleccionado
 
     if file:
+        # Leer el archivo Excel con las columnas 'X' (Consumo) y 'Y' (Importe)
         df = pd.read_excel(file)
 
-        # Supongamos que CEA es la columna X y M_Total es la columna Y
-        x = df['CEA'].values
-        y = df['M_Total'].values
+        # Asumimos que las columnas son 'X' para Consumo y 'Y' para Importe
+        x = df['X'].values  # Consumo en KWh
+        y = df['Y'].values  # Importe en S/
 
         # Elegir el método de integración o interpolación
         if method == 'trapecios':
@@ -99,9 +101,9 @@ def upload_file():
             plt.plot(x_fit, y_fit, label=f'{method.replace("_", " ").title()}', color='red')
 
         plt.fill_between(x, y, color='skyblue', alpha=0.4)
-        plt.title(f'Área bajo la curva ({method.capitalize()})')
-        plt.xlabel('CEA')
-        plt.ylabel('M_Total')
+        plt.title(f'Relación entre Consumo y Importe ({method.capitalize()})')
+        plt.xlabel('Consumo (KWh)')
+        plt.ylabel('Importe (S/)')
         plt.legend()
 
         # Guardar la imagen en formato base64 para enviarla al frontend
@@ -112,7 +114,7 @@ def upload_file():
 
         # Responder con los resultados
         return jsonify({
-            'area': area,  # Para este caso, area devolverá la fórmula del polinomio ajustado
+            'area': area,  # Para este caso, area devolverá la fórmula del polinomio ajustado o el valor del área
             'plot': plot_url
         })
 
