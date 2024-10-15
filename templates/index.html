@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Consumo Energético</title>
+</head>
+<body>
+    <h1>Análisis de Consumo Energético</h1>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="archivo">Sube tu archivo de Excel:</label>
+        <input type="file" id="archivo" name="file">
+        
+        <label for="method">Selecciona el método de integración:</label>
+        <select name="method" id="method">
+            <option value="trapecios">Método de los Trapecios</option>
+            <option value="simpson">Método de Simpson</option>
+            <option value="logaritmica">Regresión Logarítmica</option>
+            <option value="regresion_polinomica">Regresión Polinómica</option> <!-- Nueva opción -->
+        </select>
+        
+        
+        <button type="submit">Subir y Calcular</button>
+    </form>
+
+    <h2>Resultados:</h2>
+    <p>Área o Fórmula: <span id="area"></span></p>
+
+    <h2>Gráfica:</h2>
+    <img id="plot" alt="Gráfica">
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let formData = new FormData(this);
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.getElementById('area').textContent = data.area;
+                    document.getElementById('plot').src = 'data:image/png;base64,' + data.plot;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
